@@ -103,6 +103,7 @@ left:-15px;
       <li><a href="#survey" rel="rel1">Survey</a></li>
       <li><a href="#approach" rel="rel1">Approach</a></li>
       <li><a href="#results" rel="rel1">Results</a></li>
+      <li><a href="#visualization" rel="rel1">Visualization</a></li>   
       <li><a href="#conclusion" rel="rel1">Conclusion</a></li>
     </ul>
   </div>
@@ -256,6 +257,9 @@ N  (#columns) = 16384<br>
 <div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (2).gif"></img><h3>2.	Region of Interest:</h3><p>Our general region of interest are the two ventricles, as seen in the picture, bounded by the blue circle. Our volumes and ejection fractions are calculated for the left ventricle. As we see, we’ve zoomed into our ROI with a good degree of accuracy for an automated segmentation method. An important step to getting to our ROI was reshaping the image to a form that is standard across frames and patients. We followed it up with getting approximate centers and radii for our ROI in these images and bounding them with a circle.</p></div>
 <div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (1).gif"></img><h3>3.	Gaussian Probability Map:</h3><p>We ran a radial basis function across the reshaped image to get a probability map that helps us find the areas of interest as shown in the picture. This is a zoomed-out image to give us an idea of why the previous step is necessary and also showing that we can get our ROI as a probability function that then enables us to crop into our final area of interest, which is bounded in the circle in the next image.</p></div>
 </div>
+
+<a name="visualization"></a>
+<br><h2> Interactive Visualization:</h2>
 <div class='tableauPlaceholder' id='viz1524591149245' style='position: relative'><noscript><a href='#'><img alt='Dashboard 1 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;28&#47;28FPSP8QY&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='path' value='shared&#47;28FPSP8QY' /> <param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;28&#47;28FPSP8QY&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1524591149245');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='1024px';vizElement.style.height='795px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
 
 <br><h2>List of Innovations:</h2>
