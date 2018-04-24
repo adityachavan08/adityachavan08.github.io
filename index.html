@@ -1,0 +1,348 @@
+<html>
+<title>Automatic Determination of Cardiac Volumes from MRI Scans</title>
+<meta name="viewport" content="width=900">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<style>
+<style type="text/css">
+
+
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.bg {
+    /* The image used */
+    background-image: url("bcground.png");
+
+    /* Full height */
+	
+    height: 100%; 
+	max-height: 1100px;
+    /* Center and scale the image nicely */
+    background-position: center; 
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.heading1 {
+  text-align: center;
+  position: absolute;
+  top: 300px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font:Lato, sans-serif;
+}
+.span1{
+display:block;
+}
+.body1{
+  text-align: left;
+  position: absolute;
+  margin-left:100px;
+  margin-right:100px;
+  vertical-align: top;
+}
+.image3{
+max-width:100%;
+max-height:100%;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+.image2{
+max-width:500px;
+max-height:100%;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+a:before {
+  display: block;
+  content: " ";
+  margin-top: -40px;
+  height: 64px;
+  visibility: hidden;
+}
+.footer {
+padding:0px;
+	margin-left:-0%;
+   bottom: 0;
+   width: 100%;
+   background-color: #e6e6e6;
+   color: gray;
+   text-align: center;
+   
+}
+ul {
+  list-style-type: none;
+}
+.centr{
+left:-15px;
+  margin-right:auto;
+  margin-left:auto;
+
+}
+</style>
+
+<head class="container">
+
+<nav class="navbar navbar-light navbar-fixed-top" style="background-color: white;"  >
+  <div class="container-fluid">
+    <div >
+      <a class="navbar-brand" href="#">CSE 6242</a>
+    </div>
+    <ul class="nav navbar-nav" id="nav1">
+	  <li class="active" ><a href="#linktotop" rel="rel1">Home</a></li>
+      <li><a href="#intro" rel="rel1">Introduction</a></li>
+      <li><a href="#survey" rel="rel1">Survey</a></li>
+      <li><a href="#approach" rel="rel1">Approach</a></li>
+      <li><a href="#results" rel="rel1">Results</a></li>
+      <li><a href="#conclusion" rel="rel1">Conclusion</a></li>
+    </ul>
+  </div>
+
+  </nav>
+  <a name="linktotop"></a>
+<div class="bg" name="home" width="100%">
+ <div class="heading1">
+			<span class="span1" width="1000px" ><p style="font-size:50px;" >Automatic Determination of Cardiac Volumes from MRI Scans</p> </span>
+				<span>	<h3>Transforming Diagnosis of Heart Diseases</h3></span>
+</div>
+</div>
+
+
+
+ </head>
+
+<body>
+
+<div class="body1">
+<a name="intro"></a>
+<br><h2>Introduction</h2>
+<br><p>Diagnosing cardiac anomalies is a leading issue faced by medical researchers, and several methods have been used to estimate a heart’s “Cardiac-Output”, ie, the volume of the ventricles, in both active (systolic) and resting (diastolic) states. The incentive behind doing so is to be able to effectively calculate the heart’s ejection fraction (EF), defined as the percentage of blood ejected from the left ventricle with each heartbeat. The ventricles’ volumes and the EF together are predictive of a number of heart diseases. While multiple modalities can measure volumes/EF, calculating them from Magnetic Resonance Imaging (MRIs) yield the best results. However, the current standard for the estimation of ventricle volumes is to have a cardiologist calculate them manually from MRIs in a rather time-consuming process. Automating this process will allow doctors to diagnose heart conditions early/better, and carries broad implications for advancing the science of heart disease treatment.</p>
+<br><h2>Problem Definition</h2>
+<br><p>Our aim is to automate the manual processing by a trained convolutional neural network(CNN) that can approximate the end-systolic/diastolic volume of the left ventricle using the same MRIs an expert would need.
+Our task is that of supervised-regression, and the loss function that we’ll be using is mean square error(MSE) using convex L2-minimization. To avoid overfitting, we’ll be modifying our loss function to accommodate Tikhonov regularization.</p>
+<a name="survey"></a>
+<br><h2>Survey</h2>
+<br><p>The three questions addressed by each paper are:<br>
+I. Main Idea<br>
+II. How’s the paper useful for our project?<br>
+III. What are the shortcomings, how do we improve upon them?<br></p>
+
+<strong>Paper- 1</strong>
+<p>
+I. Proposes first segmenting for the ROI and then cardiac output from MRI images as regression problem using CNNs.<br>
+II. Has used the same dataset as ours.<br>
+III. The combined approach for segmentation and cardiac output calculation might not work as well as a more modular approach.<br>
+</p>
+<strong>Paper- 2, 3, 5</strong>
+<p>
+I. Explores ensemble learning, SVMs and Deep-Belief-Networks to achieve our project’s aim.<br>
+II. Advantages: good generalization, high accuracy for smaller amounts of training data and less variance can be incorporated.<br>
+III. These papers focus on small datasets with low variance and noise. <br>
+</p>
+<strong>Paper- 4, 8, 11</strong>
+<p>
+I. Explains concepts of deep learning, tracking features across frames, active contours.<br>
+II. Our project uses the concepts mentioned above.<br>
+III. No shortcomings. These are seminal works, used as reference even today, post adaptation.<br>
+</p>
+<strong>Paper-6</strong>
+<p>
+I. Proposes fully automated segmentation and tracking of the myocardium that can be used for measuring regional motion, deformation, as well as labelling and tracking specific regions of the heart.<br>
+II. Introduces potential transformations for segmentation of data.Also shows a way to relate images spatially and temporally.<br>
+III. Is done for 4D-MRI images, which is different from our dataset and cannot be used as is.<br>
+</p>
+<strong>Paper-7</strong>
+<p>
+I. Proposes a method by which we can automatically segment the left ventricle from a 3D-MRI.<br>
+II. Explains how the data might be “unclean” due to variations in factors like blood flow, partial volume-effects etc. <br>
+III. Uses multi-model prior knowledge that is not applicable to our dataset.<br>
+</p>
+<strong>Paper-9</strong>
+<p>
+I. Presents a segmentation approach that is robust and accurate on the short axis cardiac MRI.<br>
+II. Part of our dataset contains images that are short axis MRI images, thus making this approach important.<br>
+III. The ROI needs to be remedied with certain transformations to bring the ROI in the same form as the other images. <br>
+</p>
+<strong>Paper-10</strong>
+<p>
+I. Proposes the use of a Deep-Belief-Network for detecting the ROI in the left ventricle of the heart.<br>
+II. Combining active contours with a DBN results in needing smaller datasets for training.<br>
+III. The method described needs manual initialization, which we avoid by using CNN.<br>
+</p>
+<strong>Paper-12</strong>
+<p>
+I. Fast and robust implementation of a CNN to perform automated ventricle segmentation.<br>
+II. This model of segmentation of ventricles uses a single learning stage, and can leverage computational resources like GPUs at massive scales.<br>
+III. The models were trained on the Sunnybrook dataset, which is too small to create complex, powerful models.<br>
+</p>
+<strong>Paper-13</strong>
+<p>
+I. A CNN is used for restoration of noisy or degraded images as opposed to traditional methods. Shows significant improvement in performance.<br>
+II. Useful because medical images received may be noisy or degraded and hence image-segmentation may not be possible.<br>
+III. Uses a feedforward network on every patch of the image hence slow. This will be solved by partially rarefying the weights[15].<br>
+</p>
+<strong>Paper-14</strong>
+<p>
+I. Two networks in a recursive training architecture are used. One generates a preliminary boundary-map and another generates the final boundary-map.<br>
+II. Faster restoration of degraded images hence improving performance.<br>
+III. Computationally heavy, GPU acceleration will help.<br>
+</p>
+<strong>Paper-15</strong>
+<p>
+I. Performs better than conventional statistical-shape models by utilizing random walks for segmentation.<br>
+II. Useful for accurate segmentation and shows better generalization.<br>
+III. The dataset doesn’t truly represent the actual data population which can be addressed by collecting more data.<br>
+</p>
+<strong>Paper-16</strong>
+<p>
+I. Trains a neural net to learn augmentation and decide which augmentations best improves the classifiers.<br>
+II. Can potentially eliminate manual data-augmentation. <br>
+III. The automated augmentation might not result in improving the performance of the CNN.<br>
+</p>
+<strong>Paper-17</strong>
+<p>
+I. Advocates using prior knowledge about the shape of the organ being analyzed and its location instead of only pixel-wise classifiers, when training CNNs. <br>
+II. Knowledge of anatomy of heart could be used to eliminate corrupted/misleading data.<br>
+III. No shortcomings.<br>
+</p>
+<strong>Paper-18</strong>
+<p>
+I. Discusses image-processing and feature-extraction techniques when using a neural network to classify images. <br>
+II. Use feature-extraction and image pre-processing techniques. <br>
+III. Some techniques discussed are not applicable to our dataset. <br>
+</p>
+<a name="approach"></a>
+<br><h2>Approach taken:</h2>
+<br><p>
+<strong>1. Collection/Cleaning:</strong>
+<br><p> The data was sourced from the 2016-Data Science Bowl competition. The test set consists of 4-channel(4ch), 2-ch and multiple short axis views for 500 patients. Post cleaning and filtering, we have 30 4-channel MRIs for 480 patients, so a total of 14400 images. The validation and test sets have 4ch MRIs for 200 patients each.<p>
+</p>
+<br><p>
+<strong>2. Preprocessing:</strong>
+<br><p> The available data had a lot of inconsistencies such as varying sizes and orientations. Consequently, this is the task that we put most of our efforts and time in. All the input images were resized to 256x256 pixels. The metadata was saved for later analyses. The region of interest(RoI) was near the center of the resized images and a 128x128 region around the RoI was extracted to keep only the relevant information and discard unnecessary data. The advantage of doing this is that the matrix formed after flattening and concatenating all the images will have only the relevant features, thus making the problem less underdetermined, leading to a better accuracy. Also, smaller feature matrices reduce computation costs. Finally, a radial basis transfer function was applied on the extracted image to give a probability estimate for the final RoI in the cropped feature-images.</p>
+<p>The (128,128)4ch images were flattened into(1x16384) vectors. Our input would therefore be an MxN matrix:<br>
+M ( #rows) = (4-ch images )*(# patients) = 30*480 = 14400<br>
+N  (#columns) = 16384<br>
+</p>
+</p>
+<p>
+<strong>3. Architecture:</strong>
+<br><p>Our implemented CNN will be a simplified version of the U-Net architecture that has found much success in biological object recognition. It will consist of convolutional, pooling and fully connected layers. Our intermediate activation functions are ReLUs and the final is a sigmoid.
+</p>
+<img class="image2" src="arch.png" max-width="100px"></img>
+<br>
+<p><strong>4. Visualization:</strong>
+<br><p>We’ve made this website as part of our visualization . We plan to create an interactive scatterplot which will display the volume of LV along with the patient details available from the dicom images. A bar graph which shows the average value of left ventricle volume against the age group will be created. We plan to compile all the visualizations on a Tableau dashboard, publish it on a server and embed it in our website.
+</p>
+</p>
+
+<a name="results"></a>
+<br><h2>Experiments, Evaluation and Results:</h2>
+<p>Since this is a regression problem, it is essential that our  technique’s (CNN) increased complexity as opposed to the simplest regression approach we could have had, ie linear regression, gives us commensurate improvement in accuracy. We are hoping to improve on the accuracy by at-least 30%. Our experiment is ready, and is running at this point.
+<br>Another experimental portion of our project is evaluating the parameters of our model so as to achieve a good bias-variance tradeoff and not overfit. We will do so by using k-fold validation for choosing our final model-parameters. This portion of our project is currently a work-in-progress.</p>
+
+<div class="row">
+<div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (3).gif"></img><h3>1.	Original image:</h3><p>The gif shows the 4-chambered views of patient 1’s heart. The different regions that one can see here are the ventricles (which are our region of interest), the pulmonary semilunar valve and the combination of the Epicardium, Myocardium and Endocardium (together popularly called the “wall of the heart”). The “active” parts of the gif show how the volumes of the ventricles change in systole (active) and diastole (resting). Even when using the same modality, often the dimensions of an MRI are different for patients, which was a problem that we encountered when we started using this data. </p></div>
+<div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (2).gif"></img><h3>2.	Region of Interest:</h3><p>Our general region of interest are the two ventricles, as seen in the picture, bounded by the blue circle. Our volumes and ejection fractions are calculated for the left ventricle. As we see, we’ve zoomed into our ROI with a good degree of accuracy for an automated segmentation method. An important step to getting to our ROI was reshaping the image to a form that is standard across frames and patients. We followed it up with getting approximate centers and radii for our ROI in these images and bounding them with a circle.</p></div>
+<div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (1).gif"></img><h3>3.	Gaussian Probability Map:</h3><p>We ran a radial basis function across the reshaped image to get a probability map that helps us find the areas of interest as shown in the picture. This is a zoomed-out image to give us an idea of why the previous step is necessary and also showing that we can get our ROI as a probability function that then enables us to crop into our final area of interest, which is bounded in the circle in the next image.</p></div>
+</div>
+<br><h2>List of Innovations:</h2>
+<br><p>1. We’ve used traditional image processing techniques along with ML methods to make our features better to improve accuracy instead of simply collecting more data.
+<br>2. We exploited a-priori knowledge of the images to filter out parts of the dataset and reduce the number of outliers in it.
+<br>3. Regional properties of images and metadata will be used to potentially predict a healthy heart from an unhealthy one, if time permits.
+<br>4. Our CNN will be a more application-specific and computationally efficient version of the U-Net.
+</p>
+<a name="conclusion"></a>
+<br><h2>Conclusion:</h2>
+<p>Since this is a work in progress, it is too soon for us to give any concrete conclusions. However, it our hope to show that there is a significant improvement in terms of accuracy when using the more complex CNN instead of simple Linear Regression even at the cost of increasing training time. Should time permit, we will implement a classifier that uses some of the output of the regression alongwith the metadata as features to differentiate an unhealthy heart from a healthy one.</p>
+
+
+<br><h2>References</h2>
+<p>
+<br>[1] Estimating the volume of the left ventricle from MRI images using deep neural networks. Journal of Latex class files, Vol.14, No.8, August 2015. Fangzhou Liao, Xi Chen, Xiaolin Hu, Senior Member, IEEE and Sen Song
+
+<br><br>[2] Diagnosing Coronary Heart Disease Using Ensemble Machine Learning.(IJACSA) International Journal of Advanced Computer Science and Applications, Vol. 7, No. 10, 2016. Kathleen H. Miao , Julia H. Miao , and George J. Miao.
+
+
+<br><br>[3] Applying Machine Learning Methods in Diagnosing Heart Disease for Diabetic Patients. International Journal of Applied Information Systems (IJAIS) – ISSN : 2249-0868  Volume 3– No.7, August 2012. G. Parthiban and S.K.Srivatsa
+
+<br><br>[4] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, vol. 521, no. 7553, pp. 436–444, May 2015.
+
+<br><br>[5] T. A. Ngo and G. Carneiro, “Left ventricle segmentation from cardiac MRI combining level set methods with deep belief networks,” in Proceedings of International Conference on Image Processing, Sep. 2013, pp. 695–699.
+
+<br><br>[6] M. Lorenzo-Valds, G. I. Sanchez-Ortiz, R. Mohiaddin, and D. Rueckert, “Atlas-Based Segmentation and Tracking of 3D Cardiac MR Images Using Non-rigid Registration,” in Proceedings of International Conference on Medical Image Computing and Computer Assisted Intervention. Springer Berlin Heidelberg, Sep. 2002, pp. 642–650.
+
+<br><br>[7] M. R. Kaus, J. von Berg, J. Weese, W. Niessen, and V. Pekar, “Automated segmentation of the left ventricle in cardiac MRI,” Medical Image Analysis, vol. 8, no. 3,
+pp. 245–254, 2004.
+
+<br><br>[8]P. Viola and M. Jones, “Rapid object detection using a boosted cascade of simple features,” in Proceedings of IEEE Conference on Computer Vision and Pattern Recognition, vol. 1. IEEE, 2001, pp. I–511.
+
+<br><br>[9]H. Hu, H. Liu, Z. Gao, and L. Huang, “Hybrid segmentation of left ventricle in cardiac MRI using gaussian mixture model and region restricted dynamic programming,” Magnetic Resonance Imaging, vol. 31, no. 4, pp. 575–584, May 2013.
+
+<br><br>[10]T. A. Ngo, Z. Lu, and G. Carneiro, “Combining deep learning and level set for the automated segmentation of the left ventricle of the heart from cardiac cine magnetic resonance,” Medical Image Analysis, vol. 35, pp. 159–171, Jan. 2017.
+
+<br><br>[11] M. Kass, A. Witkin, and D. Terzopoulos, “Snakes: Active contour models,” International Journal of Computer Vision, vol. 1, no. 4, pp. 321–331, 1987.
+
+<br><br>[12] P. V. Tran, “A Fully Convolutional Neural Network for Cardiac Segmentation in Short-Axis MRI,” arXiv:1604.00494 [cs], Apr. 2016.
+
+<br><br>[13] V. Jain, J. F. Murray, F. Roth, S. Turaga, V. Zhigulin, K. L. Briggman, M. N. Helmstaedter, W. Denk, and H. S. Seung, “Supervised Learning of Image Restoration with Convolutional Networks,” in Proceedings of IEEE International Conference on Computer Vision, Oct. 2007, pp. 1 – 8.
+
+<br><br>[14] K. Lee, A. Zlateski, V. Ashwin, and H. S. Seung, “Recursive Training of 2D-3D Convolutional Networks for Neuronal Boundary Prediction,” in Advances in Neural Information Processing Systems, 2015, pp. 3573–3581.
+
+<br><br>[15] A. Eslami, A. Karamalis, A. Katouzian, and N. Navab, “Segmentation by retrieval with guided random walks: Application to left ventricle segmentation in MRI,” Medical Image Analysis, vol. 17, no. 2, pp. 236–253, Feb. 2013.
+
+
+<br><br>[16] Jason Wang, Luis Perez, “The Effectiveness of Data Augmentation in Image Classification using Deep Learning”, ArXiv e-prints, Dec. 2017. 
+
+<br><br>[17] Ozan Oktay, Enzo Ferrante, Konstantinos Kamnitsas, Mattias Heinrich, Wenjia Bai, Jose Caballero, Stuart Cook,  Antonio de Marvao, Timothy Dawes, Declan O’Regan, Bernhard Kainz, Ben Glocker, and Daniel Rueckert, “Anatomically Constrained Neural Networks (ACNN): Application to Cardiac Image Enhancement and Segmentation”, IEEE Transactions on Medical Imaging, AUG 2017. 
+
+
+<br><br>[18] Elalfi A., Eisa M. and Ahmed H, “Artificial neural networks in medical images for diagnosis heart valve diseases”, International. Journal of computer science issues, 2013.
+
+</p>
+
+
+<div class="footer row">
+<div class="col-md-6" ><p class="text-muted"><br><br><br>Built for CSE 6242: Data and Visual Analytics<br>Georgia Tech, College of Engineering<br><br><br></p></div>
+<div class="col-md-6 centr" ><p class="text-muted centr">
+<ul>
+<strong>Team Members: </strong>
+<li>Aishwarya Balwani</li>
+<li>Aditya Chavan</li>
+<li>Sapan Desai</li>
+<li>Parth Desai</li>
+<li>Bhakti Patel</li>
+<li>Vishwateja Reddy</li>
+</ul>
+
+</p></div>
+
+</div>
+     
+
+<script>
+// device detection
+if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) 
+    || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) { 
+ 
+//document.body.style.display = "none";
+//alert("I told you not to open it from your cellphones didnt I? Go get your damn laptop");
+	
+}
+</script>
+
+</body>
+
+
+	
+	
+</html>
