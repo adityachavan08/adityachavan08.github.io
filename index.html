@@ -127,10 +127,19 @@ left:-15px;
 <a name="intro"></a>
 	
 <br><h2>Introduction</h2>
-<br><p>Diagnosing cardiac anomalies is a leading issue faced by medical researchers, and several methods have been used to estimate a heart’s “Cardiac-Output”, ie, the volume of the ventricles, in both active (systolic) and resting (diastolic) states. The incentive behind doing so is to be able to effectively calculate the heart’s ejection fraction (EF), defined as the percentage of blood ejected from the left ventricle with each heartbeat. The ventricles’ volumes and the EF together are predictive of a number of heart diseases. While multiple modalities can measure volumes/EF, calculating them from Magnetic Resonance Imaging (MRIs) yield the best results. However, the current standard for the estimation of ventricle volumes is to have a cardiologist calculate them manually from MRIs in a rather time-consuming process. Automating this process will allow doctors to diagnose heart conditions early/better, and carries broad implications for advancing the science of heart disease treatment.</p>
+<br><p>Diagnosing cardiac anomalies is a leading issue faced by medical researchers, and several methods have been used to estimate a heart’s “Cardiac Output”, that is, the volume of the ventricles, in both active (systolic) and resting (diastolic) states. The incentive behind doing so is to be able to effectively calculate the heart’s ejection fraction (EF), which is defined as the percentage of blood ejected from the left ventricle with each heartbeat. The ventricles’ volumes and the ejection fraction together are predictive of a number of heart diseases and hold much promise in early detection of cardiac anomalies. While multiple modalities can measure cardiac volumes and the subsequent ejection fraction, calculating them from Magnetic Resonance Imaging (MRIs) yields the best results. However, the current standard for the estimation of ventricle volumes is to have a cardiologist calculate them manually from MRIs in a rather time consuming process. Automating this process will allow doctors to diagnose heart conditions early/ better, and carries broad implications for advancing the science of heart disease treatment and therefore forms the inspiration of our project. </p>
 <br><h2>Problem Definition</h2>
-<br><p>Our aim is to automate the manual processing by a trained convolutional neural network(CNN) that can approximate the end-systolic/diastolic volume of the left ventricle using the same MRIs an expert would need.
-Our task is that of supervised-regression, and the loss function that we’ll be using is mean square error(MSE) using convex L2-minimization. To avoid overfitting, we’ll be modifying our loss function to accommodate Tikhonov regularization.</p>
+<br><p>Our aim is to automate the manual processing involved in determination of cardiac volumes by training a convolutional neural network(CNN) that can approximate the end-systolic/diastolic volume of the left ventricle using the same MRIs an expert would need. Our task is that of supervised regression, and the loss function used is mean square error (MSE) using convex L2 minimization.</p>
+
+<br><h2>Dataset</h2>
+<br><p>The data was sourced from the 2016 Data Science Bowl competition. The original dataset consisted of 4 channel (4ch), 2 channel (2ch) and multiple short axis (SAX) views for approximately 500 patients in the training set. 
+However, the 4ch views were the most effective and usable form, as the ventricles are clearly visible in the coronal plane.<br>
+Post cleaning and filtering, we have 30 4-channel MRIs each for 480 patients, thus giving us a total of 14400 training images. The validation and test sets have 4ch MRIs for approximately 200 patients each.
+The images are in the DICOM (Digital Imaging and Communications in Medicine) format which also contained metadata such as age, sex, heart size for all the patients.
+The data occupied  around 45 GB in total.
+</p>
+
+
 <a name="survey"></a>
 <br><h2>Survey</h2>
 <br><p>The three questions addressed by each paper are:<br>
@@ -222,56 +231,74 @@ I. Discusses image-processing and feature-extraction techniques when using a neu
 II. Use feature-extraction and image pre-processing techniques. <br>
 III. Some techniques discussed are not applicable to our dataset. <br>
 </p>
+
+
 <a name="approach"></a>
 <br><h2>Approach taken:</h2>
 <br><p>
-<strong>1. Collection/Cleaning:</strong>
-<br><p> The data was sourced from the 2016-Data Science Bowl competition. The test set consists of 4-channel(4ch), 2-ch and multiple short axis views for 500 patients. Post cleaning and filtering, we have 30 4-channel MRIs for 480 patients, so a total of 14400 images. The validation and test sets have 4ch MRIs for 200 patients each.<p>
-</p>
+<strong>1. Proposed Method:</strong>
+<br><p>Our approach to solving the problem was to train a CNN that could potentially perform the task well enough in lieu of a trained cardiologist. In order to be able to do so, we first preprocessed the data to maximize the information that our features would be conveying to the CNN by using some traditional image processing techniques. We followed it up with the training of the CNN, and to justify the additional resources that are associated with it, we compared it to multiple other simpler, less compute and time intensive regressors.</p>
 <br><p>
 <strong>2. Preprocessing:</strong>
-<br><p> The available data had a lot of inconsistencies such as varying sizes and orientations. Consequently, this is the task that we put most of our efforts and time in. All the input images were resized to 256x256 pixels. The metadata was saved for later analyses. The region of interest(RoI) was near the center of the resized images and a 128x128 region around the RoI was extracted to keep only the relevant information and discard unnecessary data. The advantage of doing this is that the matrix formed after flattening and concatenating all the images will have only the relevant features, thus making the problem less underdetermined, leading to a better accuracy. Also, smaller feature matrices reduce computation costs. Finally, a radial basis transfer function was applied on the extracted image to give a probability estimate for the final RoI in the cropped feature-images.</p>
-<p>The (128,128)4ch images were flattened into(1x16384) vectors. Our input would therefore be an MxN matrix:<br>
-M ( #rows) = (4-ch images )*(# patients) = 30*480 = 14400<br>
-N  (#columns) = 16384<br>
-</p>
-</p>
-<p>
-<strong>3. Architecture:</strong>
-<br><p>Our implemented CNN will be a simplified version of the U-Net architecture that has found much success in biological object recognition. It will consist of convolutional, pooling and fully connected layers. Our intermediate activation functions are ReLUs and the final is a sigmoid.
-</p>
-<img class="image2" src="arch.png" max-width="100px"></img>
-<br>
-<p><strong>4. Visualization:</strong>
-<br><p>We’ve made this website as part of our visualization . We plan to create an interactive scatterplot which will display the volume of LV along with the patient details available from the dicom images. A bar graph which shows the average value of left ventricle volume against the age group will be created. We plan to compile all the visualizations on a Tableau dashboard, publish it on a server and embed it in our website.
-</p>
-</p>
-
-<a name="results"></a>
-<br><h2>Experiments, Evaluation and Results:</h2>
-<p>Since this is a regression problem, it is essential that our  technique’s (CNN) increased complexity as opposed to the simplest regression approach we could have had, ie linear regression, gives us commensurate improvement in accuracy. We are hoping to improve on the accuracy by at-least 30%. Our experiment is ready, and is running at this point.
-<br>Another experimental portion of our project is evaluating the parameters of our model so as to achieve a good bias-variance tradeoff and not overfit. We will do so by using k-fold validation for choosing our final model-parameters. This portion of our project is currently a work-in-progress.</p>
-
+<br><p>The available data had a lot of inconsistencies such as varying sizes and orientations. Consequently, this is the task that we put most of our efforts and time in.<br>
+Since we wanted to create a CNN that was computationally efficient, but at the same time did not suffer from any biases and had a good sampling of the overall distribution, we restricted our input MRIs to those which had 4 channel views as the ventricles were seen most clearly in these images. It would be a reasonable assumption that a human expert would also choose a 4ch view over a 2ch or SAX view of the heart<br>
+All the input images were first resized to 256x256 pixels. The metadata was saved for later analyses. The region of interest (RoI) was near the center of the resized images and a 128x128 region around the RoI was extracted to keep only the relevant information and discard unnecessary data. The advantage of doing this is that the matrix formed after flattening and concatenating all the images will have only the relevant features, thus making the problem less underdetermined, leading to a better accuracy. This area was then resized to 64x64 to reduce computation time as smaller feature matrices reduce computation costs. Finally, a radial basis transfer function was applied on the extracted image to give a probability estimate for the final RoI in the cropped feature images. <br>
+For the regression methods described in the experiments section, the (64,64) 4ch images were flattened into (1x4096) vectors. Our input would therefore be an MxN matrix:<br>
+M ( #rows) = (4 ch images )*(# patients) = 30*480 = 14400<br>
+N  (#columns) = 4096<br>
 <div class="row">
 <div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (3).gif"></img><h3>1.	Original image:</h3><p>The gif shows the 4-chambered views of patient 1’s heart. The different regions that one can see here are the ventricles (which are our region of interest), the pulmonary semilunar valve and the combination of the Epicardium, Myocardium and Endocardium (together popularly called the “wall of the heart”). The “active” parts of the gif show how the volumes of the ventricles change in systole (active) and diastole (resting). Even when using the same modality, often the dimensions of an MRI are different for patients, which was a problem that we encountered when we started using this data. </p></div>
 <div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (2).gif"></img><h3>2.	Region of Interest:</h3><p>Our general region of interest are the two ventricles, as seen in the picture, bounded by the blue circle. Our volumes and ejection fractions are calculated for the left ventricle. As we see, we’ve zoomed into our ROI with a good degree of accuracy for an automated segmentation method. An important step to getting to our ROI was reshaping the image to a form that is standard across frames and patients. We followed it up with getting approximate centers and radii for our ROI in these images and bounding them with a circle.</p></div>
 <div class="col-md-4"><img class="image3" src="Webp.net-resizeimage (1).gif"></img><h3>3.	Gaussian Probability Map:</h3><p>We ran a radial basis function across the reshaped image to get a probability map that helps us find the areas of interest as shown in the picture. This is a zoomed-out image to give us an idea of why the previous step is necessary and also showing that we can get our ROI as a probability function that then enables us to crop into our final area of interest, which is bounded in the circle in the next image.</p></div>
 </div>
+</p>
+</p>
+<p>
+<strong>3. Architecture:</strong>
+<br><p>Our implemented CNN was a modified, simpler version of the U-Net architecture that has found much success in biological object recognition. It will consisted of convolutional, pooling and fully connected layers. Our intermediate activation functions are Rectified Linear Units (ReLUs) and the final is a sigmoid function.
+<br>Our model consisted of three convolutional layers, one flattening layer and two fully connected layers used as part of the CNN architecture. Each of three convolutional layers used a single convolved layer, max pooling, and Relu layer. The output of the third convolutional layer which was multidimensional tensor, which was converted to a one-dimensional tensor in the next layer which was the flattened layer. The output of the flattened layer was used to create the fully connected layer, which took all the inputs and used the standard z = wx + b operation on it. At the end Relu was used to add nonlinearity to it. The next layer was another fully connected layer that took the output of the last fully connected layer and performed the same operation, except this time Relu layer was not used. The output of the final layer was used as output of the CNN. Two separate convolutional neural nets used for end systolic and diastolic volume prediction. Learning rates ranging from 10-5 to 10-3, and batch sizes of 32,64,96,128 were tried, of which 10-4 ,32 worked best. The model took close to 800 epochs to converge. 
+<br>The CNN optimized on the mean squared loss between the output of the last fully connected layer and the y_true data, when training. The entire architecture was implemented in TensorFlow.
+
+</p>
+<img class="image2" src="arch.png" max-width="100px"></img>
+<br>
+<p><strong>4. Visualization:</strong>
+<br><p>We have made this website as part of our visualization. It includes an interactive scatterplot which displays the volume of LV along with the patient details sourced from the metadata available from the dicom images. We have compiled all the visualizations on a Tableau dashboard, published it on a server and have embedded it on this website.</p>
+</p>
+
+<a name="results"></a>
+<br><h2>Experiments, Evaluation and Results:</h2>
+<p>Our experiments ensured that the extra time and effort spent in designing and training the CNN was justified in terms of accuracy.​ Multiple toy models were implemented, thus giving us baseline estimates for different ML algorithms:
+<br>
+Linear Regression: The most basic regressor known to mankind, it is the most economical in terms of compute, with no parameters or hyper-parameters to tune, and is extremely simple to implement.​ It however, understandably had the lowest accuracy, but was extremely fast and simple to implement.
+<br>
+Support Vector Machine: Another popular ML algorithm, while SVMs aren't very quick, they provide good accuracies and when kernelized, can be extended to very high dimensions and highly non-linear mappings.
+<br>
+Single-layer Neural Network: We compared our program’s results against a single layer neural network’s to make sure that our approach justifies the additional time and compute required for a CNN as opposed to a vanilla neural net. The 1-layer NN acted as our baseline, minimum accuracy that we tuned the CNN to beat.
+<br>
+Random Forests: Random forests, which are an ensemble of different regression trees can be used for nonlinear multivariate regression. Each leaf contains a distribution for the continuous output variables. Just as with classification, random forests provide good accuracy and are fairly robust to biases in the dataset.
+<br>
+For the experiments, we used the standard cross-validation of 3 and worked with standard practices for hyperparameter tuning in the sklearn library. The MSE of the models were converted to accuracy percentages by using the true labels of our test data and taking its fraction.
+<br></p>
 
 <a name="visualization"></a>
 <br><h2> Interactive Visualization:</h2>
 <div class='tableauPlaceholder' id='viz1524591149245' style='position: relative'><noscript><a href='#'><img alt='Dashboard 1 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;28&#47;28FPSP8QY&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='path' value='shared&#47;28FPSP8QY' /> <param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;28&#47;28FPSP8QY&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1524591149245');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='1024px';vizElement.style.height='795px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
 
 <br><h2>List of Innovations:</h2>
-<br><p>1. We’ve used traditional image processing techniques along with ML methods to make our features better to improve accuracy instead of simply collecting more data.
-<br>2. We exploited a-priori knowledge of the images to filter out parts of the dataset and reduce the number of outliers in it.
-<br>3. Regional properties of images and metadata will be used to potentially predict a healthy heart from an unhealthy one, if time permits.
-<br>4. Our CNN will be a more application-specific and computationally efficient version of the U-Net.
+<br><p>1. Traditional image processing techniques were used to augment the machine learning methods to maximize the information content of our features, thus improving our models’ accuracies instead of simply collecting more data and making the process extremely compute and resource heavy.
+<br>2. We exploited a priori knowledge of the images to concentrate and enhance the parts of our images and reduce the effect and number of “outlier pixels” in it.
+<br>3. Our CNN is a more application-specific and computationally efficient version of the U Net.
 </p>
 <a name="conclusion"></a>
 <br><h2>Conclusion:</h2>
-<p>Since this is a work in progress, it is too soon for us to give any concrete conclusions. However, it our hope to show that there is a significant improvement in terms of accuracy when using the more complex CNN instead of simple Linear Regression even at the cost of increasing training time. Should time permit, we will implement a classifier that uses some of the output of the regression alongwith the metadata as features to differentiate an unhealthy heart from a healthy one.</p>
-
+<p>As expected, regular L2-minimizing linear regression performs least accurately. However, it serves as a good estimate as to for a minimum, required accuracy for any model that further develops. Using L1-minimization could possibly have provided a better fit and subsequent accuracy.
+We notice that the support vector regressor performs fairly well, which might imply that the data might be linearly separable once we perform a radial basis transformation. This isn’t surprising especially as we’ve used a radial basis smoothing on our input features.
+Random forests perform well, as expected, while the 1-layer neural network serves as a decent starting point for the CNN to improve upon.
+</p>
+<br><h2>Future Work</h2>
+<p>Further tuning of the hyperparameters will definitely improve the CNN’s accuracy, and is one of the most promising directions for future work.
+Another improvement would be to increase the number of layers and making the network deeper. This would introduce the possibility of bad generalization and overfitting, which could be combated with regularization techniques like drop-out, or techniques like early stopping. </p>
 
 <br><h2>References</h2>
 <p>
